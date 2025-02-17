@@ -1,0 +1,94 @@
+Objective:
+Create a fully-featured, modern, and responsive podcast streaming website using JSON data from multiple creators. The website should have an elegant design, advanced playback functionality, dynamic theming, and be fully optimized for mobile and desktop.
+
+JSON Data Structure
+Each creator's data follows this standardized JSON format:
+
+json
+Copy
+Edit
+{
+  "totalVideos": 77,
+  "videos": [
+    {
+      "videoId": "ClKf-ukrtY8",
+      "title": "I ordered pizza from dark web (Dark web story)",
+      "description": "#darkweb #darkstory #deepweb #alphaakki",
+      "filePath": "https://lucent-truffle-a87150.netlify.app/akkidark/ClKf-ukrtY8.webm",
+      "published": 1739491200000,
+      "publishedText": "2 days ago",
+      "viewCount": 56756,
+      "lengthSeconds": 1356,
+      "liveNow": false,
+      "author": "Alpha Akki Dark"
+    }
+  ]
+}
+JSON URLs for Creators
+The application should fetch and integrate data from the following podcast creators:
+
+json
+Copy
+Edit
+{
+  "Alpha Akki Dark": "https://raw.githubusercontent.com/Shashwat-CODER-Music/akkidark/refs/heads/main/channel.json",
+  "Sr Pay Stories": "https://raw.githubusercontent.com/Studyleague01/srpay/refs/heads/main/channel.json",
+  "Alpha Akki": "https://raw.githubusercontent.com/Shashwat-CODING/akki/refs/heads/main/channel.json",
+  "Shivam is On": "https://raw.githubusercontent.com/Scodify236/sio/refs/heads/main/channel.json",
+  "Thrill Tales": "https://raw.githubusercontent.com/1fffd/thrilltales/refs/heads/main/channel.json",
+  "Akshay Vasisth": "https://raw.githubusercontent.com/channelcnt/channel/refs/heads/main/channel.json",
+  "Amaan Parkar": "https://raw.githubusercontent.com/Studyleague01/amanpar/refs/heads/main/channel.json"
+}
+Website Features & Functionalities
+1. Dynamic & Responsive Theming System
+✅ Automatically extract colors from the podcast thumbnail and apply them dynamically:
+
+Background color adapts to the dominant thumbnail color
+Text, buttons, and UI elements adjust accordingly
+Supports both light and dark modes based on device preferences
+Smooth transitions between different themes
+✅ Apply blur effects, transparency, and elegant gradients for a modern and premium look.
+
+2. Home Page Layout
+✅ Trending Section: Displays the most popular podcasts based on view count
+✅ All Podcasts Section: Categorized view of all creators' podcasts
+✅ Fully Responsive Grid Layout that adapts to different screen sizes
+✅ Elegant UI Enhancements:
+
+Hover effects and animations for interactive experience
+Thumbnail previews with smooth transitions
+Line clamping for long titles
+3. Advanced Podcast Playback System
+📌 Mini-Player (Floating & Persistent)
+Always visible at the bottom of the screen
+Shows the thumbnail, title, and playback controls
+Includes play/pause, seek, and volume controls
+Clicking on it expands into the full-screen player
+🎬 Full-Screen Player (Elegant & Feature-Rich)
+Displays large thumbnail and podcast details
+15-second skip forward & backward buttons
+Autoplay next podcast in sequence
+Full seek bar with progress tracking
+Queue management system
+Playback speed control (0.5x, 1x, 1.5x, 2x, etc.)
+Volume control & mute toggle
+Adaptive Background Blur Effect (matches thumbnail colors)
+4. Additional Features for a Stunning UX
+✅ Smooth Hover Effects & Transitions for interactive UI
+✅ Error Handling & Loading States for seamless experience
+✅ View Count & Duration Formatting (e.g., "1.2M views", "22m ago")
+✅ Adaptive UI for Mobile Devices
+✅ Autoplay next episode when the current one finishes
+✅ Theme adapts dynamically based on podcast thumbnails
+
+Technology Stack
+Frontend:
+
+React + TypeScript (for structured, scalable development)
+Tailwind CSS (for stunning, customizable UI)
+Zustand / Redux (for state management)
+Features to Implement with Libraries:
+
+Extract dominant colors from thumbnails using color-thief
+Elegant transitions & animations using Framer Motion
+Optimized media playback using HTML5 Audio API

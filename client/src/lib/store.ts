@@ -22,11 +22,6 @@ interface AudioPlayerState {
   minimized: boolean;
   searchQuery: string;
   selectedCreator: string | null;
-  colors: {
-    background: string;
-    foreground: string;
-    accent: string;
-  };
   audioInstance: HTMLAudioElement | null;
   setCurrentVideo: (video: PodcastVideo | null) => void;
   setIsPlaying: (playing: boolean) => void;
@@ -34,7 +29,6 @@ interface AudioPlayerState {
   setProgress: (progress: number) => void;
   setDuration: (duration: number) => void;
   setMinimized: (minimized: boolean) => void;
-  setColors: (colors: { background: string; foreground: string; accent: string }) => void;
   setSearchQuery: (query: string) => void;
   setSelectedCreator: (creator: string | null) => void;
   initAudio: () => void;
@@ -52,31 +46,38 @@ export const useAudioStore = create<AudioPlayerState>((set, get) => ({
   minimized: true,
   searchQuery: '',
   selectedCreator: null,
-  colors: {
-    background: 'hsl(0 0% 100%)',
-    foreground: 'hsl(0 0% 0%)',
-    accent: 'hsl(250 95% 60%)'
-  },
   audioInstance: null,
-  setCurrentVideo: (video) => {
+  setCurrentVideo: async (video) => {
     const state = get();
     if (state.audioInstance && video) {
       state.audioInstance.src = video.filePath;
       state.audioInstance.load();
-      state.audioInstance.play();
+      set({ currentVideo: video, isPlaying: true });
+      try {
+        await state.audioInstance.play();
+      } catch (error) {
+        // If autoplay fails, we'll let the user manually start playback
+        set({ isPlaying: false });
+      }
+    } else {
+      set({ currentVideo: video });
     }
-    set({ currentVideo: video, isPlaying: true });
   },
-  setIsPlaying: (playing) => {
+  setIsPlaying: async (playing) => {
     const state = get();
     if (state.audioInstance) {
-      if (playing) {
-        state.audioInstance.play();
-      } else {
-        state.audioInstance.pause();
+      try {
+        if (playing) {
+          await state.audioInstance.play();
+          set({ isPlaying: true });
+        } else {
+          state.audioInstance.pause();
+          set({ isPlaying: false });
+        }
+      } catch (error) {
+        set({ isPlaying: false });
       }
     }
-    set({ isPlaying: playing });
   },
   setVolume: (volume) => {
     const state = get();
@@ -88,7 +89,6 @@ export const useAudioStore = create<AudioPlayerState>((set, get) => ({
   setProgress: (progress) => set({ progress }),
   setDuration: (duration) => set({ duration }),
   setMinimized: (minimized) => set({ minimized }),
-  setColors: (colors) => set({ colors }),
   setSearchQuery: (query) => set({ searchQuery: query }),
   setSelectedCreator: (creator) => set({ selectedCreator: creator }),
   initAudio: () => {

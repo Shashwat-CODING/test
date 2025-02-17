@@ -21,16 +21,6 @@ export default defineConfig({
         ]
       : []),
   ],
-  server: {
-    port: 8000,
-    strictPort: true, // This forces Vite to fail if port 8000 is not available
-    host: true // This enables listening on all network interfaces
-  },
-  preview: {
-    port: 8000,
-    strictPort: true,
-    host: true
-  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "client", "src"),

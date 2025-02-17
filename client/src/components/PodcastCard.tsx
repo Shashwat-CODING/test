@@ -10,21 +10,17 @@ interface PodcastCardProps {
 
 export function PodcastCard({ video }: PodcastCardProps) {
   const setCurrentVideo = useAudioStore(state => state.setCurrentVideo);
-  const colors = useAudioStore(state => state.colors);
   const thumbnailUrl = extractThumbnailUrl(video.videoId);
 
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
+      className="w-full sm:w-[300px]"
     >
       <Card 
-        className="overflow-hidden cursor-pointer group backdrop-blur-sm" 
+        className="overflow-hidden cursor-pointer group hover:bg-muted/50 bg-card/50 backdrop-blur-sm border-border h-full"
         onClick={() => setCurrentVideo(video)}
-        style={{ 
-          backgroundColor: `${colors.background}99`,
-          borderColor: colors.accent
-        }}
       >
         <CardContent className="p-0">
           <div className="relative">
@@ -37,11 +33,11 @@ export function PodcastCard({ video }: PodcastCardProps) {
               {formatDuration(video.lengthSeconds)}
             </div>
           </div>
-          <div className="p-4">
+          <div className="p-4 space-y-2">
             <h3 className="font-semibold line-clamp-2 group-hover:text-primary">
               {video.title}
             </h3>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-sm text-muted-foreground">
               {video.author}
             </p>
             <p className="text-sm text-muted-foreground">

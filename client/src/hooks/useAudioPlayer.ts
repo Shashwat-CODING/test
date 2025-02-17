@@ -12,17 +12,7 @@ export function useAudioPlayer() {
     if (audioInstance) {
       audioInstance.volume = volume;
     }
-  }, [volume]);
-
-  useEffect(() => {
-    if (audioInstance) {
-      if (isPlaying) {
-        audioInstance.play().catch(() => setIsPlaying(false));
-      } else {
-        audioInstance.pause();
-      }
-    }
-  }, [isPlaying]);
+  }, [volume, audioInstance]);
 
   useEffect(() => {
     const audio = audioInstance;
@@ -41,8 +31,7 @@ export function useAudioPlayer() {
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
       audio.removeEventListener('ended', handleEnded);
     };
-  }, []);
-
+  }, [audioInstance, setProgress, setDuration, setIsPlaying]);
 
   const seek = (time: number) => {
     if (audioInstance) {

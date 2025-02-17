@@ -6,7 +6,8 @@ export const PODCAST_CREATORS = {
   "Thrill Tales": "https://raw.githubusercontent.com/1fffd/thrilltales/refs/heads/main/channel.json",
   "Akshay Vasisth": "https://raw.githubusercontent.com/channelcnt/channel/refs/heads/main/channel.json",
   "Amaan Parkar": "https://raw.githubusercontent.com/Studyleague01/amanpar/refs/heads/main/channel.json",
-  "Fintale": "https://raw.githubusercontent.com/Shashwat-CODER-Music/fintale/refs/heads/main/channel.json"
+  "Fintale": "https://raw.githubusercontent.com/Shashwat-CODER-Music/fintale/refs/heads/main/channel.json",
+  "Alpha Crime": "https://raw.githubusercontent.com/matjano/akkicrime/refs/heads/main/channel.json"
 };
 
 export const STORAGE_KEYS = {

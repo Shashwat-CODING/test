@@ -3,12 +3,11 @@ import { useAudioStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { formatDuration, extractThumbnailUrl } from "@/lib/utils";
-import { useColorThief } from "@/hooks/useColorThief";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Play, Pause, SkipBack, SkipForward, 
-  Volume2, VolumeX, Minimize2, X,
+  Minimize2, X,
   Heart, Share2, ListMusic
 } from "lucide-react";
 
@@ -16,22 +15,13 @@ export function AudioPlayer() {
   const {
     currentVideo,
     isPlaying,
-    volume,
     progress,
     setIsPlaying,
-    setVolume,
     setMinimized,
-    setColors,
-    colors
   } = useAudioStore();
 
   const { seek, skip } = useAudioPlayer();
   const thumbnailUrl = currentVideo ? extractThumbnailUrl(currentVideo.videoId) : '';
-  const extractedColors = useColorThief(thumbnailUrl);
-
-  useEffect(() => {
-    setColors(extractedColors);
-  }, [extractedColors, setColors]);
 
   if (!currentVideo) return null;
 
@@ -45,66 +35,83 @@ export function AudioPlayer() {
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 100 }}
-        className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xl"
-        style={{ 
-          backgroundColor: `${colors.background}cc`,
-          color: colors.foreground
-        }}
+        className="fixed inset-0 z-50 flex flex-col bg-gradient-to-br from-background via-background/95 to-primary/10 backdrop-blur-xl"
       >
-        {/* Mobile Close Button */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setMinimized(true)}
-          className="absolute right-4 top-4 md:hidden z-10"
-        >
-          <X className="h-6 w-6" />
-        </Button>
-
-        <div className="relative w-full max-w-4xl mx-auto p-6">
-          {/* Desktop Top Controls */}
-          <div className="hidden md:flex justify-between items-center mb-8">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setMinimized(true)}
-            >
-              <Minimize2 className="h-6 w-6" />
+        {/* Mobile Header */}
+        <div className="flex items-center justify-between p-4 md:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setMinimized(true)}
+          >
+            <X className="h-6 w-6" />
+          </Button>
+          <div className="flex gap-2">
+            <Button variant="ghost" size="icon">
+              <Heart className="h-5 w-5" />
             </Button>
-            <div className="flex gap-4">
-              <Button variant="ghost" size="icon">
-                <Heart className="h-6 w-6" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Share2 className="h-6 w-6" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <ListMusic className="h-6 w-6" />
-              </Button>
-            </div>
+            <Button variant="ghost" size="icon">
+              <Share2 className="h-5 w-5" />
+            </Button>
           </div>
+        </div>
 
-          {/* Main Content */}
-          <div className="flex flex-col md:flex-row gap-8 items-center mt-8 md:mt-0">
-            <div className="md:w-1/2">
-              <motion.img
+        {/* Desktop Header */}
+        <div className="hidden md:flex justify-between items-center px-8 py-6">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setMinimized(true)}
+            className="hover:bg-white/10"
+          >
+            <Minimize2 className="h-6 w-6" />
+          </Button>
+          <div className="flex gap-6">
+            <Button variant="ghost" size="icon" className="hover:bg-white/10">
+              <Heart className="h-6 w-6" />
+            </Button>
+            <Button variant="ghost" size="icon" className="hover:bg-white/10">
+              <Share2 className="h-6 w-6" />
+            </Button>
+            <Button variant="ghost" size="icon" className="hover:bg-white/10">
+              <ListMusic className="h-6 w-6" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 p-4 md:p-8 overflow-y-auto">
+          {/* Thumbnail Section */}
+          <motion.div 
+            className="w-full md:w-2/5 max-w-lg flex items-center justify-center"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="relative w-full aspect-video rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+              <img
                 src={thumbnailUrl}
                 alt={currentVideo.title}
-                className="w-full aspect-square object-cover rounded-2xl shadow-2xl"
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.3 }}
+                className="w-full h-full object-cover"
               />
             </div>
+          </motion.div>
 
-            <div className="md:w-1/2 space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold mb-2">{currentVideo.title}</h2>
-                <p className="text-lg opacity-80">{currentVideo.author}</p>
-              </div>
+          {/* Controls Section */}
+          <div className="w-full md:w-2/5 max-w-lg flex flex-col justify-center gap-8">
+            {/* Title and Author */}
+            <div className="space-y-3 text-center md:text-left">
+              <h2 className="text-2xl md:text-4xl font-bold text-foreground line-clamp-2">
+                {currentVideo.title}
+              </h2>
+              <p className="text-lg md:text-2xl text-muted-foreground/80">
+                {currentVideo.author}
+              </p>
+            </div>
 
-              {/* Playback Controls */}
-              <div className="space-y-6">
+            {/* Playback Controls */}
+            <div className="space-y-6">
+              <div className="space-y-3">
                 <Slider
                   value={[progress]}
                   max={currentVideo.lengthSeconds}
@@ -113,68 +120,43 @@ export function AudioPlayer() {
                   className="w-full"
                 />
 
-                <div className="flex justify-between text-sm opacity-80">
+                <div className="flex justify-between text-sm md:text-base text-muted-foreground/70 px-1">
                   <span>{formatDuration(progress)}</span>
                   <span>{formatDuration(currentVideo.lengthSeconds)}</span>
                 </div>
+              </div>
 
-                <div className="flex items-center justify-center gap-6">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => skip(-15)}
-                    className="h-12 w-12"
-                  >
-                    <SkipBack className="h-6 w-6" />
-                  </Button>
+              <div className="flex items-center justify-center gap-8 md:gap-10">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => skip(-15)}
+                  className="h-14 w-14 md:h-16 md:w-16 hover:bg-white/10"
+                >
+                  <SkipBack className="h-7 w-7 md:h-8 md:w-8" />
+                </Button>
 
-                  <Button
-                    variant="default"
-                    size="icon"
-                    onClick={() => setIsPlaying(!isPlaying)}
-                    className="h-16 w-16 rounded-full"
-                    style={{ 
-                      backgroundColor: `${colors.accent}ee`,
-                      backdropFilter: 'blur(8px)'
-                    }}
-                  >
-                    {isPlaying ? (
-                      <Pause className="h-8 w-8" />
-                    ) : (
-                      <Play className="h-8 w-8 ml-1" />
-                    )}
-                  </Button>
+                <Button
+                  variant="default"
+                  size="icon"
+                  onClick={() => setIsPlaying(!isPlaying)}
+                  className="h-20 w-20 md:h-24 md:w-24 rounded-full bg-primary hover:bg-primary/90 shadow-lg"
+                >
+                  {isPlaying ? (
+                    <Pause className="h-10 w-10 md:h-12 md:w-12 text-primary-foreground" />
+                  ) : (
+                    <Play className="h-10 w-10 md:h-12 md:w-12 ml-1 text-primary-foreground" />
+                  )}
+                </Button>
 
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => skip(15)}
-                    className="h-12 w-12"
-                  >
-                    <SkipForward className="h-6 w-6" />
-                  </Button>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setVolume(volume === 0 ? 1 : 0)}
-                  >
-                    {volume === 0 ? (
-                      <VolumeX className="h-6 w-6" />
-                    ) : (
-                      <Volume2 className="h-6 w-6" />
-                    )}
-                  </Button>
-                  <Slider
-                    value={[volume * 100]}
-                    max={100}
-                    step={1}
-                    onValueChange={(value) => setVolume(value[0] / 100)}
-                    className="w-32"
-                  />
-                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => skip(15)}
+                  className="h-14 w-14 md:h-16 md:w-16 hover:bg-white/10"
+                >
+                  <SkipForward className="h-7 w-7 md:h-8 md:w-8" />
+                </Button>
               </div>
             </div>
           </div>

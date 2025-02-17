@@ -13,6 +13,13 @@ export function PodcastGrid() {
     const matchesSearch = video.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCreator = !selectedCreator || video.author === selectedCreator;
     return matchesSearch && matchesCreator;
+  }).sort((a, b) => {
+    if (selectedCreator) {
+      // Sort by published date (newest first) when viewing specific creator
+      return b.published - a.published;
+    }
+    // Sort by views when viewing all creators
+    return b.viewCount - a.viewCount;
   });
 
   if (isLoading) {

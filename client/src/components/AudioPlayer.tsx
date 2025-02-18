@@ -22,8 +22,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Play, Pause, SkipBack, SkipForward,
   Minimize2, X, Timer,
-  Heart, Share2, ListMusic,
-  FastForward, List
+  Heart, FastForward, List
 } from "lucide-react";
 
 const PLAYBACK_SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
@@ -43,11 +42,14 @@ export function AudioPlayer() {
     setSleepTimer,
     removeFromQueue,
     playNext,
+    toggleLike,
+    isLiked
   } = useAudioStore();
 
   const { seek, skip } = useAudioPlayer();
   const thumbnailUrl = currentVideo ? extractThumbnailUrl(currentVideo.videoId) : '';
   const [showQueue, setShowQueue] = useState(false);
+  const liked = currentVideo ? isLiked(currentVideo.videoId) : false;
 
   if (!currentVideo) return null;
 
@@ -76,14 +78,13 @@ export function AudioPlayer() {
           >
             <X className="h-6 w-6" />
           </Button>
-          <div className="flex gap-2">
-            <Button variant="ghost" size="icon">
-              <Heart className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <Share2 className="h-5 w-5" />
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => currentVideo && toggleLike(currentVideo.videoId)}
+          >
+            <Heart className={`h-5 w-5 ${liked ? 'fill-primary text-primary' : ''}`} />
+          </Button>
         </div>
 
         {/* Desktop Header */}
@@ -179,11 +180,13 @@ export function AudioPlayer() {
               </SheetContent>
             </Sheet>
 
-            <Button variant="ghost" size="icon" className="hover:bg-white/10">
-              <Heart className="h-6 w-6" />
-            </Button>
-            <Button variant="ghost" size="icon" className="hover:bg-white/10">
-              <Share2 className="h-6 w-6" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hover:bg-white/10"
+              onClick={() => currentVideo && toggleLike(currentVideo.videoId)}
+            >
+              <Heart className={`h-6 w-6 ${liked ? 'fill-primary text-primary' : ''}`} />
             </Button>
           </div>
         </div>

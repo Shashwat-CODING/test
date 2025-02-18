@@ -4,6 +4,30 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { usePodcastData } from "@/hooks/usePodcastData";
 import { useAudioStore } from "@/lib/store";
+import { motion } from "framer-motion";
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      duration: 0.3
+    }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.4,
+      ease: "easeOut"
+    }
+  }
+};
 
 export function PodcastGrid() {
   const { data, isLoading } = usePodcastData();
@@ -13,25 +37,18 @@ export function PodcastGrid() {
     const matchesSearch = video.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCreator = !selectedCreator || video.author === selectedCreator;
     return matchesSearch && matchesCreator;
-  }).sort((a, b) => {
-    if (selectedCreator) {
-      // Sort by published date (newest first) when viewing specific creator
-      return b.published - a.published;
-    }
-    // Sort by views when viewing all creators
-    return b.viewCount - a.viewCount;
   });
 
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 animate-pulse">
+          <Skeleton className="h-11 w-full sm:w-[300px]" />
+          <Skeleton className="h-11 w-full sm:w-[200px]" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="space-y-3">
-              <Skeleton className="w-full aspect-video" />
-              <Skeleton className="h-4 w-[80%]" />
-              <Skeleton className="h-4 w-[60%]" />
-            </div>
+            <Skeleton key={i} className="w-full aspect-[1.8] rounded-xl" />
           ))}
         </div>
       </div>
@@ -45,13 +62,13 @@ export function PodcastGrid() {
           placeholder="Search podcasts..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="sm:max-w-xs"
+          className="w-full sm:w-[300px] bg-background/50 backdrop-blur-sm border-primary/20 focus:border-primary/40 transition-colors h-11"
         />
         <Select
           value={selectedCreator || "all"}
           onValueChange={(value) => setSelectedCreator(value === "all" ? null : value)}
         >
-          <SelectTrigger className="sm:max-w-xs">
+          <SelectTrigger className="w-full sm:w-[200px] bg-background/50 backdrop-blur-sm border-primary/20 focus:border-primary/40 transition-colors h-11">
             <SelectValue placeholder="All creators" />
           </SelectTrigger>
           <SelectContent>
@@ -65,16 +82,33 @@ export function PodcastGrid() {
         </Select>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <motion.div 
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"
+      >
         {filteredVideos?.map((video) => (
-          <PodcastCard key={video.videoId} video={video} />
+          <motion.div key={video.videoId} variants={item}>
+            <PodcastCard video={video} />
+          </motion.div>
         ))}
         {filteredVideos?.length === 0 && (
-          <div className="col-span-full text-center py-8 text-muted-foreground">
-            No podcasts found
-          </div>
+          <motion.div 
+            variants={item} 
+            className="col-span-full text-center py-16"
+          >
+            <div className="bg-card/30 backdrop-blur-sm rounded-xl p-8 border border-primary/10 max-w-md mx-auto">
+              <p className="text-xl text-muted-foreground mb-2 font-medium">
+                No podcasts found
+              </p>
+              <p className="text-sm text-muted-foreground/70">
+                Try adjusting your search or filter criteria
+              </p>
+            </div>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }

@@ -26,6 +26,7 @@ interface AudioPlayerState {
   selectedCreator: string | null;
   audioInstance: HTMLAudioElement | null;
   sleepTimerEndTime: number | null;
+  likedPodcasts: Set<string>;
 
   // Video Management
   setCurrentVideo: (video: PodcastVideo | null) => void;
@@ -49,9 +50,19 @@ interface AudioPlayerState {
   // Timer
   setSleepTimer: (minutes: number | null) => void;
 
+  // Like functionality
+  toggleLike: (videoId: string) => void;
+  isLiked: (videoId: string) => boolean;
+
   // Initialize
   initAudio: () => void;
 }
+
+// Load liked podcasts from localStorage
+const loadLikedPodcasts = (): Set<string> => {
+  const saved = localStorage.getItem('likedPodcasts');
+  return new Set(saved ? JSON.parse(saved) : []);
+};
 
 // Create a single audio instance
 let globalAudio: HTMLAudioElement | null = null;
@@ -69,6 +80,7 @@ export const useAudioStore = create<AudioPlayerState>((set, get) => ({
   selectedCreator: null,
   audioInstance: null,
   sleepTimerEndTime: null,
+  likedPodcasts: loadLikedPodcasts(),
 
   setCurrentVideo: async (video) => {
     const state = get();
@@ -149,6 +161,23 @@ export const useAudioStore = create<AudioPlayerState>((set, get) => ({
       const endTime = Date.now() + minutes * 60 * 1000;
       set({ sleepTimerEndTime: endTime });
     }
+  },
+
+  toggleLike: (videoId) => {
+    const state = get();
+    const newLikedPodcasts = new Set(state.likedPodcasts);
+    if (newLikedPodcasts.has(videoId)) {
+      newLikedPodcasts.delete(videoId);
+    } else {
+      newLikedPodcasts.add(videoId);
+    }
+    localStorage.setItem('likedPodcasts', JSON.stringify([...newLikedPodcasts]));
+    set({ likedPodcasts: newLikedPodcasts });
+  },
+
+  isLiked: (videoId) => {
+    const state = get();
+    return state.likedPodcasts.has(videoId);
   },
 
   setProgress: (progress) => set({ progress }),

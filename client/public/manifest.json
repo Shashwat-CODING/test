@@ -1,6 +1,6 @@
 {
-  "name": "Podcast Heaven",
-  "short_name": "PodcastHeaven",
+  "name": "Podcast Streaming PWA",
+  "short_name": "PodcastPWA",
   "description": "A comprehensive podcast streaming progressive web application",
   "start_url": "/",
   "display": "standalone",

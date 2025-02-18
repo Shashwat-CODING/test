@@ -1,33 +1,63 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAudioStore } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { formatDuration, extractThumbnailUrl } from "@/lib/utils";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Play, Pause, SkipBack, SkipForward, 
-  Minimize2, X,
-  Heart, Share2, ListMusic
+import {
+  Play, Pause, SkipBack, SkipForward,
+  Minimize2, X, Timer,
+  Heart, Share2, ListMusic,
+  FastForward, List
 } from "lucide-react";
+
+const PLAYBACK_SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+const SLEEP_TIMER_OPTIONS = [15, 30, 45, 60, 90];
 
 export function AudioPlayer() {
   const {
     currentVideo,
+    queue,
     isPlaying,
     progress,
+    playbackSpeed,
+    sleepTimerEndTime,
     setIsPlaying,
     setMinimized,
+    setPlaybackSpeed,
+    setSleepTimer,
+    removeFromQueue,
+    playNext,
   } = useAudioStore();
 
   const { seek, skip } = useAudioPlayer();
   const thumbnailUrl = currentVideo ? extractThumbnailUrl(currentVideo.videoId) : '';
+  const [showQueue, setShowQueue] = useState(false);
 
   if (!currentVideo) return null;
 
   const handleSeek = (value: number[]) => {
     seek(value[0]);
   };
+
+  const remainingTime = sleepTimerEndTime
+    ? Math.max(0, Math.ceil((sleepTimerEndTime - Date.now()) / (60 * 1000)))
+    : null;
 
   return (
     <AnimatePresence>
@@ -66,15 +96,94 @@ export function AudioPlayer() {
           >
             <Minimize2 className="h-6 w-6" />
           </Button>
-          <div className="flex gap-6">
+          <div className="flex items-center gap-6">
+            {/* Playback Speed Control */}
+            <Select
+              value={playbackSpeed.toString()}
+              onValueChange={(value) => setPlaybackSpeed(parseFloat(value))}
+            >
+              <SelectTrigger className="w-[100px]">
+                <FastForward className="h-4 w-4 mr-2" />
+                <SelectValue>{playbackSpeed}x</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {PLAYBACK_SPEEDS.map((speed) => (
+                  <SelectItem key={speed} value={speed.toString()}>
+                    {speed}x
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Sleep Timer */}
+            <Select
+              value={remainingTime?.toString() ?? "off"}
+              onValueChange={(value) => setSleepTimer(value === "off" ? null : parseInt(value))}
+            >
+              <SelectTrigger className="w-[120px]">
+                <Timer className="h-4 w-4 mr-2" />
+                <SelectValue placeholder="Sleep Timer">
+                  {remainingTime ? `${remainingTime}m left` : "Timer"}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="off">Off</SelectItem>
+                {SLEEP_TIMER_OPTIONS.map((minutes) => (
+                  <SelectItem key={minutes} value={minutes.toString()}>
+                    {minutes} minutes
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Queue Button */}
+            <Sheet open={showQueue} onOpenChange={setShowQueue}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="hover:bg-white/10">
+                  <List className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Queue</SheetTitle>
+                </SheetHeader>
+                <div className="mt-4 space-y-4">
+                  {queue.map((video, index) => (
+                    <div key={video.videoId} className="flex items-center gap-4">
+                      <img
+                        src={extractThumbnailUrl(video.videoId)}
+                        alt={video.title}
+                        className="w-16 aspect-video object-cover rounded"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium truncate">{video.title}</h4>
+                        <p className="text-sm text-muted-foreground truncate">
+                          {video.author}
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeFromQueue(video.videoId)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  {queue.length === 0 && (
+                    <p className="text-center text-muted-foreground">
+                      Queue is empty
+                    </p>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+
             <Button variant="ghost" size="icon" className="hover:bg-white/10">
               <Heart className="h-6 w-6" />
             </Button>
             <Button variant="ghost" size="icon" className="hover:bg-white/10">
               <Share2 className="h-6 w-6" />
-            </Button>
-            <Button variant="ghost" size="icon" className="hover:bg-white/10">
-              <ListMusic className="h-6 w-6" />
             </Button>
           </div>
         </div>
@@ -82,7 +191,7 @@ export function AudioPlayer() {
         {/* Main Content */}
         <div className="flex-1 flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 p-4 md:p-8 overflow-y-auto">
           {/* Thumbnail Section */}
-          <motion.div 
+          <motion.div
             className="w-full md:w-2/5 max-w-lg flex items-center justify-center"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -107,6 +216,88 @@ export function AudioPlayer() {
               <p className="text-lg md:text-2xl text-muted-foreground/80">
                 {currentVideo.author}
               </p>
+            </div>
+
+            {/* Mobile Controls */}
+            <div className="md:hidden flex justify-center gap-4">
+              <Select
+                value={playbackSpeed.toString()}
+                onValueChange={(value) => setPlaybackSpeed(parseFloat(value))}
+              >
+                <SelectTrigger className="w-[80px]">
+                  <FastForward className="h-4 w-4 mr-2" />
+                  <SelectValue>{playbackSpeed}x</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  {PLAYBACK_SPEEDS.map((speed) => (
+                    <SelectItem key={speed} value={speed.toString()}>
+                      {speed}x
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select
+                value={remainingTime?.toString() ?? "off"}
+                onValueChange={(value) => setSleepTimer(value === "off" ? null : parseInt(value))}
+              >
+                <SelectTrigger className="w-[100px]">
+                  <Timer className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Timer">
+                    {remainingTime ? `${remainingTime}m` : "Timer"}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="off">Off</SelectItem>
+                  {SLEEP_TIMER_OPTIONS.map((minutes) => (
+                    <SelectItem key={minutes} value={minutes.toString()}>
+                      {minutes}m
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Sheet open={showQueue} onOpenChange={setShowQueue}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <List className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>Queue</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-4 space-y-4">
+                    {queue.map((video, index) => (
+                      <div key={video.videoId} className="flex items-center gap-4">
+                        <img
+                          src={extractThumbnailUrl(video.videoId)}
+                          alt={video.title}
+                          className="w-16 aspect-video object-cover rounded"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium truncate">{video.title}</h4>
+                          <p className="text-sm text-muted-foreground truncate">
+                            {video.author}
+                          </p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeFromQueue(video.videoId)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                    {queue.length === 0 && (
+                      <p className="text-center text-muted-foreground">
+                        Queue is empty
+                      </p>
+                    )}
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
 
             {/* Playback Controls */}

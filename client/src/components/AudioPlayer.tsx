@@ -67,7 +67,7 @@ export function AudioPlayer() {
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 100 }}
-        className="fixed inset-0 z-50 flex flex-col bg-gradient-to-br from-background via-background/95 to-primary/10 backdrop-blur-xl"
+        className="fixed inset-0 z-50 flex flex-col bg-gradient-to-br from-black/95 via-background/95 to-primary/5 backdrop-blur-xl"
       >
         {/* Mobile Header */}
         <div className="flex items-center justify-between p-4 md:hidden">
@@ -213,10 +213,10 @@ export function AudioPlayer() {
           <div className="w-full md:w-2/5 max-w-lg flex flex-col justify-center gap-8">
             {/* Title and Author */}
             <div className="space-y-3 text-center md:text-left">
-              <h2 className="text-2xl md:text-4xl font-bold text-foreground line-clamp-2">
+              <h2 className="text-2xl md:text-4xl font-bold text-foreground/90 line-clamp-2">
                 {currentVideo.title}
               </h2>
-              <p className="text-lg md:text-2xl text-muted-foreground/80">
+              <p className="text-lg md:text-2xl text-muted-foreground">
                 {currentVideo.author}
               </p>
             </div>
@@ -320,14 +320,18 @@ export function AudioPlayer() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-center gap-8 md:gap-10">
+              {/* Skip Buttons */}
+              <div className="flex items-center justify-center gap-4 md:gap-6">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => skip(-15)}
-                  className="h-14 w-14 md:h-16 md:w-16 hover:bg-white/10"
+                  className="h-12 w-12 md:h-14 md:w-14 hover:bg-white/10 rounded-full"
                 >
-                  <SkipBack className="h-7 w-7 md:h-8 md:w-8" />
+                  <div className="relative">
+                    <SkipBack className="h-6 w-6 md:h-7 md:w-7" />
+                    <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-xs font-medium">15s</span>
+                  </div>
                 </Button>
 
                 <Button
@@ -347,9 +351,12 @@ export function AudioPlayer() {
                   variant="ghost"
                   size="icon"
                   onClick={() => skip(15)}
-                  className="h-14 w-14 md:h-16 md:w-16 hover:bg-white/10"
+                  className="h-12 w-12 md:h-14 md:w-14 hover:bg-white/10 rounded-full"
                 >
-                  <SkipForward className="h-7 w-7 md:h-8 md:w-8" />
+                  <div className="relative">
+                    <SkipForward className="h-6 w-6 md:h-7 md:w-7" />
+                    <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-xs font-medium">15s</span>
+                  </div>
                 </Button>
               </div>
             </div>

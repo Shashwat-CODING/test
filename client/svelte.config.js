@@ -1,0 +1,1 @@
+// This file has been removed as we're using React instead of Svelte.

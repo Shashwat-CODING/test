@@ -33,7 +33,7 @@ export function MiniPlayer() {
       className="fixed bottom-0 left-0 right-0 bg-background/60 border-t border-border/50 backdrop-blur-2xl shadow-lg overflow-hidden"
     >
       <div 
-        className="absolute inset-0 bg-gradient-to-r from-[#ff634730] to-[#ff936310]"
+        className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10"
         onClick={(e) => {
           const rect = e.currentTarget.getBoundingClientRect();
           const x = e.clientX - rect.left;
@@ -42,13 +42,13 @@ export function MiniPlayer() {
         }}
       >
         <div 
-          className="h-full bg-gradient-to-r from-[#ff6347] via-[#ff7347] to-[#ff9363] opacity-30 transition-all duration-150"
+          className="h-full bg-gradient-to-r from-primary/20 via-primary/25 to-primary/20 transition-all duration-150"
           style={{ width: `${progressPercentage}%` }}
         />
       </div>
       <div className="container mx-auto relative">
         <div className="flex items-center h-16 px-4 gap-4">
-          <div className="relative h-10 aspect-video flex-shrink-0 overflow-hidden rounded shadow-sm">
+          <div className="relative h-10 aspect-video flex-shrink-0 overflow-hidden rounded-lg shadow-sm">
             <img
               src={extractThumbnailUrl(currentVideo.videoId)}
               alt={currentVideo.title}

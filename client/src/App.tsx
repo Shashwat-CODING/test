@@ -6,6 +6,8 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import LikedPodcasts from "@/pages/liked";
 import { MiniPlayer } from "@/components/MiniPlayer";
+import { useAudioStore } from "@/lib/store";
+import { useEffect } from "react";
 
 function Router() {
   return (
@@ -20,6 +22,12 @@ function Router() {
 }
 
 function App() {
+  const initAudio = useAudioStore(state => state.initAudio);
+
+  useEffect(() => {
+    initAudio();
+  }, [initAudio]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <div className="relative min-h-screen bg-background text-foreground antialiased">

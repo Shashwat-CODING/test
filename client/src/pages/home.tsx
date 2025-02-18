@@ -18,7 +18,7 @@ export default function Home() {
     .slice(0, 6);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-primary/5">
+    <div className="min-h-screen bg-gradient-to-br from-black/95 via-background to-primary/5">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-8">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/50 bg-clip-text text-transparent">
@@ -77,7 +77,7 @@ export default function Home() {
 
         {/* Featured/Creator Section */}
         <div className="mb-8">
-          <h3 className="text-2xl font-bold mb-6 text-primary/80 tracking-tight">
+          <h3 className="text-3xl font-bold mb-6 text-primary/90 tracking-tight">
             {selectedCreator || "Featured"}
           </h3>
           <PodcastGrid />

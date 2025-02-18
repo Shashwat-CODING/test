@@ -16,7 +16,7 @@ export const PODCAST_CREATORS = {
   "Fintale":
     "https://raw.githubusercontent.com/Shashwat-CODER-Music/fintale/refs/heads/main/channel.json",
   "Alpha Crime":
-    "https://raw.githubusercontent.com/matjano/akkicrime/refs/heads/main/channel.json",
+    "https://akkicrime.pages.dev/channel.json",
 };
 
 export const STORAGE_KEYS = {

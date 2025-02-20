@@ -2,7 +2,6 @@ import { PodcastCard } from "@/components/PodcastCard";
 import { useAudioStore } from "@/lib/store";
 import { usePodcastData } from "@/hooks/usePodcastData";
 import { Navbar } from "@/components/Navbar";
-import { motion } from "framer-motion";
 import { Heart } from "lucide-react";
 
 export default function LikedPodcasts() {
@@ -30,11 +29,7 @@ export default function LikedPodcasts() {
           </h2>
         </div>
 
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
+        <div className="opacity-0 animate-fade-in">
           {isLoading ? (
             <div className="text-center py-12">
               <div className="animate-pulse bg-card/30 backdrop-blur-sm rounded-xl p-8">
@@ -42,27 +37,21 @@ export default function LikedPodcasts() {
               </div>
             </div>
           ) : (
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-            >
-              {likedPodcastsArray?.map((video) => (
-                <motion.div 
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {likedPodcastsArray?.map((video, index) => (
+                <div 
                   key={video.videoId}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3 }}
+                  className="opacity-0 animate-fade-slide-up"
+                  style={{
+                    animationDelay: `${index * 100}ms`,
+                    animationFillMode: 'forwards'
+                  }}
                 >
                   <PodcastCard video={video} />
-                </motion.div>
+                </div>
               ))}
               {(!likedPodcastsArray || likedPodcastsArray.length === 0) && (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="col-span-full text-center py-12"
-                >
+                <div className="col-span-full text-center py-12 opacity-0 animate-fade-in">
                   <div className="bg-card/30 backdrop-blur-sm rounded-xl p-8 border border-primary/10">
                     <Heart className="h-12 w-12 mx-auto mb-4 text-muted-foreground/30" />
                     <p className="text-xl text-muted-foreground mb-2">
@@ -72,11 +61,11 @@ export default function LikedPodcasts() {
                       Start exploring and like your favorite podcasts to see them here!
                     </p>
                   </div>
-                </motion.div>
+                </div>
               )}
-            </motion.div>
+            </div>
           )}
-        </motion.div>
+        </div>
       </div>
     </div>
   );

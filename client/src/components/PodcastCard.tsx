@@ -1,7 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { formatDuration, formatViewCount, extractThumbnailUrl } from "@/lib/utils";
 import { useAudioStore } from "@/lib/store";
-import { motion } from "framer-motion";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,13 +21,8 @@ export function PodcastCard({ video }: PodcastCardProps) {
   const liked = isLiked(video.videoId);
 
   return (
-    <motion.div
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ duration: 0.2 }}
-      className="w-full"
-    >
-      <Card className="group relative overflow-hidden bg-black/20 backdrop-blur-sm border-primary/10 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
+    <div className="w-full opacity-0 animate-fade-slide-up">
+      <Card className="group relative overflow-hidden bg-black/20 backdrop-blur-sm border-primary/10 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/10 transition-all duration-700 ease-out">
         <CardContent className="p-0">
           <div 
             className="relative w-full aspect-video cursor-pointer overflow-hidden rounded-t-xl"
@@ -37,47 +31,47 @@ export function PodcastCard({ video }: PodcastCardProps) {
             <img 
               src={thumbnailUrl}
               alt={video.title}
-              className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-105"
               loading="lazy"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="absolute bottom-2 right-2 bg-black/80 text-white px-2 py-1 text-xs rounded-md backdrop-blur-sm">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-700 ease-out" />
+            <div className="absolute bottom-3 right-3 bg-black/80 text-white px-2.5 py-1 text-xs rounded-md backdrop-blur-sm font-medium">
               {formatDuration(video.lengthSeconds)}
             </div>
           </div>
-          <div className="p-4 space-y-2">
+          <div className="p-4 space-y-3">
             <div className="flex items-start justify-between gap-2">
               <h3 
-                className="font-semibold text-base leading-tight line-clamp-2 group-hover:text-primary cursor-pointer transition-colors duration-200"
+                className="font-semibold text-base leading-tight line-clamp-2 group-hover:text-primary cursor-pointer transition-colors duration-500 ease-out"
                 onClick={() => setCurrentVideo(video)}
               >
                 {video.title}
               </h3>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0 hover:bg-primary/10">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0 hover:bg-primary/10 transition-all duration-500 ease-out">
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 backdrop-blur-lg">
+                <DropdownMenuContent align="end" className="w-48 backdrop-blur-lg bg-background/95">
                   <DropdownMenuItem onClick={() => addToQueue(video)} className="gap-2">
                     <Plus className="h-4 w-4" />
                     Add to Queue
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => toggleLike(video.videoId)} className="gap-2">
-                    <Heart className={`h-4 w-4 ${liked ? 'fill-primary' : ''}`} />
+                    <Heart className={`h-4 w-4 transition-colors duration-500 ease-out ${liked ? 'fill-primary text-primary' : ''}`} />
                     {liked ? 'Unlike' : 'Like'}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
             <div className="flex items-center justify-between text-sm text-muted-foreground/80">
-              <p className="line-clamp-1 flex-1 hover:text-primary transition-colors duration-200">{video.author}</p>
-              <p className="text-xs">{formatViewCount(video.viewCount)} views</p>
+              <p className="line-clamp-1 flex-1 hover:text-primary transition-colors duration-500 ease-out cursor-pointer">{video.author}</p>
+              <p className="text-xs font-medium">{formatViewCount(video.viewCount)} views</p>
             </div>
           </div>
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
   );
 }
